@@ -6,6 +6,7 @@ import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const getRecipeList = api.example.getRecipeList.useQuery({ text: "from tRPC" });
 
   return (
     <>
@@ -46,6 +47,8 @@ const Home: NextPage = () => {
           <p className="text-2xl text-white">
             {hello.data ? hello.data.greeting : "Loading tRPC query..."}
           </p>
+          <p>test</p>
+          <p>{getRecipeList.data ? getRecipeList.data.recipe : "Loading tRPC query..."}</p>
         </div>
       </main>
     </>
