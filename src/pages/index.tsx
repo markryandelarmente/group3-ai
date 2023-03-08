@@ -139,17 +139,17 @@ const Home: NextPage = () => {
         className={`flex min-h-screen flex-row items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]`}
       >
         <div
-          className={`container flex flex-col justify-end ${
+          className={`container flex flex-col items-center justify-end ${
             flag
-              ? "-translate-x-1/4 items-end overflow-hidden transition duration-700"
-              : "translate-0 items-center overflow-hidden transition duration-700"
-          } gap-12 px-4 py-16`}
+              ? "w-1/2 items-end overflow-hidden transition duration-700"
+              : "w-1/3 items-center overflow-hidden transition duration-700"
+          } mx-32 w-1/2  gap-6 px-20 py-16 `}
         >
-          <h1 className="animate-sample-animation text-lg font-extrabold tracking-tight text-white sm:text-[3rem]">
+          <h1 className="mb-10 animate-sample-animation text-lg font-extrabold tracking-tight text-white sm:text-[3rem]">
             Recipe Maker
           </h1>
           <input
-            className={`block w-1/3 rounded-md border-0 py-1.5 px-4 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 ${
+            className={`block w-full rounded-md border-0 py-3 px-4 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 ${
               flag ? "mr-9 sm:text-base" : "sm:text-xl"
             }`}
             required={true}
@@ -163,7 +163,7 @@ const Home: NextPage = () => {
           <button
             disabled={text ? false : true}
             onClick={handleSubmit}
-            className={`group relative flex w-1/3 justify-center rounded-md bg-indigo-600 py-2 px-3 text-lg font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-gray-300 ${
+            className={`group relative flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-lg font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-gray-300 ${
               flag ? "mr-9" : ""
             }`}
           >
@@ -172,7 +172,7 @@ const Home: NextPage = () => {
           {flag && (
             <button
               onClick={handleCancel}
-              className={`group relative flex w-1/3 justify-center rounded-md bg-red-600 py-2 px-3 text-lg font-semibold text-white hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:bg-gray-300  ${
+              className={`group relative flex w-full justify-center rounded-md bg-red-600 py-2 px-3 text-lg font-semibold text-white hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:bg-gray-300  ${
                 flag ? "mr-9" : ""
               }`}
             >
@@ -194,19 +194,38 @@ const Home: NextPage = () => {
                     <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
                       {!list ? (
                         <div className="flex h-screen w-full items-center justify-center border-[2px] border-red-400">
-                          SADFDASFADSFDSAF
+                          <div role="status" className="max-w-sm animate-pulse">
+                            <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="h-2 max-w-[360px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                            <span className="sr-only">Loading...</span>
+                          </div>
                         </div>
                       ) : (
                         list.map((item: any, index) => (
                           <div key={index} className="group relative">
-                            <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
-                              <img
-                                src={imageList[index]}
-                                alt={item.name}
-                                className="h-full w-full object-cover object-center"
-                              />
+                            <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative flex h-80 w-full items-center justify-center overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
+                              {!imageList[index] ? (
+                                <div
+                                  className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                  role="status"
+                                >
+                                  <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                                    Loading...
+                                  </span>
+                                </div>
+                              ) : (
+                                <img
+                                  src={imageList[index]}
+                                  alt={item.name}
+                                  className="h-full w-full object-cover object-center"
+                                />
+                              )}
                             </div>
-                            <h3 className="mt-6 text-sm text-gray-500">
+                            <h3 className="pt-4 text-base font-semibold text-gray-900">
                               <div
                                 onClick={() => goToInstructions(item, index)}
                               >
@@ -214,9 +233,6 @@ const Home: NextPage = () => {
                                 {item.name}
                               </div>
                             </h3>
-                            <p className="text-base font-semibold text-gray-900">
-                              {item.name}
-                            </p>
                           </div>
                         ))
                       )}

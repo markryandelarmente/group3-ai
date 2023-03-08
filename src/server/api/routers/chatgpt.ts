@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 
 const openai = new OpenAIApi(configuration);
