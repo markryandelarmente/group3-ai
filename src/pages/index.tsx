@@ -187,14 +187,37 @@ const Home: NextPage = () => {
             {!isIntructionsPage ? (
               <div className="h-full bg-gray-100">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                  <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-32">
+                  <div className="mx-auto h-screen max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-32">
                     <h2 className="text-2xl font-bold text-gray-900">
                       Recipes
                     </h2>
                     <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
-                      {!list ? (
-                        <div className="flex h-screen w-full items-center justify-center border-[2px] border-red-400">
-                          SADFDASFADSFDSAF
+                      {list.map((item: any, index) => (
+                        <div key={index} className="group relative">
+                          <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative flex h-80 w-full items-center justify-center overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
+                            {imageList[index] ? (
+                              <img
+                                src={imageList[index]}
+                                alt={item.name}
+                                className="h-full w-full object-cover object-center"
+                              />
+                            ) : (
+                              <div
+                                className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                role="status"
+                              >
+                                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                                  Loading...
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <h3 className="pt-4 text-base font-semibold text-gray-900">
+                            <div>
+                              <span className="absolute inset-0" />
+                              {item.name}
+                            </div>
+                          </h3>
                         </div>
                       ) : (
                         list.map((item: any, index) => (
