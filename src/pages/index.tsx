@@ -44,10 +44,10 @@ const Home: NextPage = () => {
               </div>
             </Link>
           </div>
-          <p className="text-2xl text-white">
+          {/* <p className="text-2xl text-white">
             {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-          </p>
-          <p>test</p>
+          </p> */}
+          <h1>TEST</h1>
           <p>{getRecipeList.data ? getRecipeList.data.recipe : "Loading tRPC query..."}</p>
         </div>
       </main>
