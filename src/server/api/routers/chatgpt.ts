@@ -56,7 +56,6 @@ export const chatGPTRouter = createTRPCRouter({
           n: 1,
           size: "256x256",
         });
-        console.log("IMEDS: ", response.data.data[0]?.url);
 
         return response.data.data[0]?.url;
       } catch (error) {

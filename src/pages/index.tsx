@@ -14,23 +14,21 @@ import { api } from "~/utils/api";
 const Home: NextPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [text, setText] = useState<string>("");
-  const [imageList, setImageList] = useState([]);
+  const [imageList, setImageList] = useState<any>([]);
 
-  const chat = api.chatgpt.generateResponse.useMutation();
-  const chatImage = api.chatgpt.generateImage.useMutation();
-  //   {onSuccess(data, variables, context) {
-  //   console.log(data)
-  //   console.log(variables)
-  //   console.log(context)
-  //     const tempList = [];
-  //     tempList.push({
-  //       name: variables.prompt,
-  //       imageUrl: data,
-  //       hasImage: true
-  //     })
-  //     console.log(imageList)
-  //     setImageList()
-  // },});
+  const chatImage = api.chatgpt.generateImage.useMutation({
+    onSuccess: (data) => setImageList((imageList: any) => [...imageList, data]),
+  });
+  const chat = api.chatgpt.generateResponse.useMutation({
+    async onSuccess(data) {
+      const setImages = async () => {
+        data?.forEach(async (item) => {
+          const image = chatImage.mutate({ prompt: item });
+        });
+      };
+      await setImages();
+    },
+  });
   const [flag, setFlag] = useState<boolean>(false);
   const [list, setList] = useState<string[]>([]);
   const [usaNaBoolean, setUsaNaBoolean] = useState(false);
@@ -68,84 +66,23 @@ const Home: NextPage = () => {
     setText(e?.target?.value);
   };
 
-  const handleImage = async (text: string) => {
-    console.log("PAYLOAD: ", text);
-    const image = chatImage.mutate({
-      prompt: text,
-    });
-    console.log(image);
-    // if(image?.data){
-    //   const tempList = imageList;
-    //   tempList.push({
-    //     name: text,
-    //     imageUrl: chatImage?.data
-    //   })
-    //   console.log(tempList)
-    //   setImageList(tempList)
-    // }
-  };
-
-  useEffect(() => {
-    console.log("imagessss: ", imageList);
-  }, [imageList]);
-
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  // useEffect(() => {
-  //   if (chatImage?.data) {
-  //     console.log("RES: ", chatImage);
-  //     // return chatImage.data;
-  //   }
-  // }, [chatImage?.data])
-
   useEffect(() => {
     if (chat.data) {
       let splitter = chat.data;
-      let images = [
-        { url: "https://picsum.photos/id/237/200/300" },
-        { url: "https://picsum.photos/seed/picsum/200/300" },
-        { url: "https://picsum.photos/200/300/?blur" },
-      ];
       let finalData: any = splitter.map((item, index) => {
         return {
           name: item,
-          imageUrl: images[index]?.url,
+          imageUrl: "",
         };
       });
       console.log("data", splitter);
       setList(finalData);
-      // finalData.map((item) => {
-      //   console.log(item)
-      //   handleImage(item.name)
-      // })
     }
   }, [chat.data]);
-
-  // useEffect(() => {
-  //   let hasAllImages = list.every((e: any) => e.hasImage);
-  //   if (!hasAllImages) {
-  //     let finalData: any = list.map((item, index) => {
-  //       return {
-  //         name: item,
-  //         imageUrl: handleImage(item?.name),
-  //         hasImage: true,
-  //       };
-  //     });
-  //     console.log("SIGEEE: ", finalData);
-
-  //     setList(finalData);
-  //   }
-  // }, [list]);
-
-  // useEffect(() => {
-  //   if (list) {
-  //     chatImage.mutate({
-  //       prompt: list,
-  //     });
-  //   }
-  // }, [list]);
 
   return (
     <>
@@ -215,7 +152,7 @@ const Home: NextPage = () => {
                         <div key={index} className="group relative">
                           <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
                             <img
-                              src={item.imageUrl}
+                              src={imageList[index]}
                               alt={item.name}
                               className="h-full w-full object-cover object-center"
                             />
