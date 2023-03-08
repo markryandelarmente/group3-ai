@@ -206,7 +206,10 @@ const Home: NextPage = () => {
                         </div>
                       ) : (
                         list.map((item: any, index) => (
-                          <div key={index} className="group relative">
+                          <div
+                            key={index}
+                            className="group relative cursor-pointer"
+                          >
                             <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative flex h-80 w-full items-center justify-center overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
                               {!imageList[index] ? (
                                 <div
@@ -241,47 +244,49 @@ const Home: NextPage = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-row">
+              <div className="overflow-y-scroll">
+                <div className="flex flex-row">
+                  <div className="mx-auto h-auto max-w-2xl px-4 pt-10 pb-4 sm:px-6">
+                    <div className="border-gray-200 pr-2 ">
+                      <div className="relative mb-6 h-80 w-full">
+                        <img
+                          src={selectedRecipe?.imageUrl}
+                          alt={selectedRecipe?.name}
+                          className="h-full w-full rounded-lg object-cover object-center brightness-50"
+                        />
+                        <h1 className="absolute bottom-0 mb-2 flex items-end pl-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                          {selectedRecipe?.name}
+                        </h1>
+                      </div>
+
+                      <div className="gap-4 rounded bg-gray-200 px-4 py-5 sm:px-6">
+                        {cookingInstruction.map((item, index) => {
+                          return (
+                            <>
+                              <div
+                                className={`text-md font-medium text-gray-500 ${
+                                  ["Instructions:"].includes(
+                                    item.trim().toLowerCase()
+                                  )
+                                    ? "mt-10"
+                                    : ""
+                                }`}
+                              >
+                                {item}
+                              </div>
+                            </>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <button
-                  className="absolute bottom-0 float-right m-2 h-10 w-1/5 rounded bg-gray-600"
+                  className="bottom-0 float-right m-2 mb-8 h-10 w-1/5 rounded bg-gray-600 text-white"
                   onClick={handleBackFromInstructions}
                 >
                   Back
                 </button>
-                <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6">
-                  <div className="border-gray-200 pr-2 ">
-                    <div className="relative mb-6 h-80 w-full">
-                      <img
-                        src={selectedRecipe?.imageUrl}
-                        alt={selectedRecipe?.name}
-                        className="h-full w-full rounded-lg object-cover object-center brightness-50"
-                      />
-                      <h1 className="absolute bottom-0 mb-2 flex items-end pl-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                        {selectedRecipe?.name}
-                      </h1>
-                    </div>
-
-                    <div className="gap-4 rounded bg-gray-200 px-4 py-5 sm:px-6">
-                      {cookingInstruction.map((item, index) => {
-                        return (
-                          <>
-                            <div
-                              className={`text-sm font-medium text-gray-500 ${
-                                ["Instructions:"].includes(
-                                  item.trim().toLowerCase()
-                                )
-                                  ? "mt-10"
-                                  : ""
-                              }`}
-                            >
-                              {item}
-                            </div>
-                          </>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
           </div>
