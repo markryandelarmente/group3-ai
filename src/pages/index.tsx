@@ -10,6 +10,10 @@ import {
 } from "react";
 
 import { api } from "~/utils/api";
+interface RecipeType {
+  name: string;
+  imageUrl: string;
+}
 
 const Home: NextPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,12 +33,14 @@ const Home: NextPage = () => {
       await setImages();
     },
   });
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeType>();
+  const [cookingInstruction, setCookingInstruction] = useState<string[]>([]);
+  const cookingInstructions = api.chatgpt.generateCookingDetails.useMutation();
   const [flag, setFlag] = useState<boolean>(false);
   const [list, setList] = useState<string[]>([]);
-  const [usaNaBoolean, setUsaNaBoolean] = useState(false);
+  const [isIntructionsPage, setIsIntructionsPage] = useState(false);
 
   const handleSubmit = () => {
-    console.log(text);
     setFlag(true);
     setList([]);
     chat.mutate({
@@ -45,8 +51,6 @@ const Home: NextPage = () => {
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     const { key } = event;
     if (key === "Enter" && text !== "") {
-      console.log(text);
-      // handleImage(text);
       chat.mutate({
         prompt: text,
       });
@@ -59,6 +63,12 @@ const Home: NextPage = () => {
   const handleCancel = () => {
     setFlag(false);
     setText("");
+    setSelectedRecipe({
+      name: "",
+      imageUrl: "",
+    });
+    setCookingInstruction([]);
+    setIsIntructionsPage(false);
     inputRef.current?.focus();
   };
 
@@ -66,9 +76,38 @@ const Home: NextPage = () => {
     setText(e?.target?.value);
   };
 
+  const handleImage = async (text: string) => {
+    const image = chatImage.mutate({
+      prompt: text,
+    });
+  };
+
+  const goToInstructions = (e: any) => {
+    setSelectedRecipe(e);
+    cookingInstructions.mutate({
+      prompt: e.name,
+    });
+    setIsIntructionsPage(true);
+  };
+
+  const handleBackFromInstructions = () => {
+    setSelectedRecipe({
+      name: "",
+      imageUrl: "",
+    });
+    setCookingInstruction([]);
+    setIsIntructionsPage(false);
+  };
+
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (cookingInstructions?.data) {
+      setCookingInstruction(cookingInstructions?.data);
+    }
+  }, [cookingInstructions?.data]);
 
   useEffect(() => {
     if (chat.data) {
@@ -79,7 +118,6 @@ const Home: NextPage = () => {
           imageUrl: "",
         };
       });
-      console.log("data", splitter);
       setList(finalData);
     }
   }, [chat.data]);
@@ -140,110 +178,89 @@ const Home: NextPage = () => {
           <div
             className={`flex h-screen w-full animate-sample-animation flex-col overflow-hidden bg-gray-400`}
           >
-            {!usaNaBoolean ? (
-              <div className="bg-gray-100">
+            {!isIntructionsPage ? (
+              <div className="h-full bg-gray-100">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                   <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-32">
                     <h2 className="text-2xl font-bold text-gray-900">
                       Recipes
                     </h2>
                     <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
-                      {list.map((item: any, index) => (
-                        <div key={index} className="group relative">
-                          <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
-                            <img
-                              src={imageList[index]}
-                              alt={item.name}
-                              className="h-full w-full object-cover object-center"
-                            />
-                          </div>
-                          <h3 className="mt-6 text-sm text-gray-500">
-                            <div onClick={() => setUsaNaBoolean(true)}>
-                              <span className="absolute inset-0" />
-                              {item.name}
-                            </div>
-                          </h3>
-                          <p className="text-base font-semibold text-gray-900">
-                            {item.name}
-                          </p>
+                      {!list ? (
+                        <div className="flex h-screen w-full items-center justify-center border-[2px] border-red-400">
+                          SADFDASFADSFDSAF
                         </div>
-                      ))}
+                      ) : (
+                        list.map((item: any, index) => (
+                          <div key={index} className="group relative">
+                            <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
+                              <img
+                                src={imageList[index]}
+                                alt={item.name}
+                                className="h-full w-full object-cover object-center"
+                              />
+                            </div>
+                            <h3 className="mt-6 text-sm text-gray-500">
+                              <div onClick={() => goToInstructions(item)}>
+                                <span className="absolute inset-0" />
+                                {item.name}
+                              </div>
+                            </h3>
+                            <p className="text-base font-semibold text-gray-900">
+                              {item.name}
+                            </p>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="flex-ro flex">
-                <button onClick={() => setUsaNaBoolean(false)}>
-                  Ma back kun magkita pa siya
+              <div className="flex flex-row">
+                <button
+                  className="absolute bottom-0 float-right m-2 h-10 w-1/5 rounded bg-gray-600"
+                  onClick={handleBackFromInstructions}
+                >
+                  Back
                 </button>
+                <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6">
+                  <div className="border-gray-200 pr-2">
+                    <div className="mb-5 flex justify-between">
+                      <h1 className="flex items-end text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                        {selectedRecipe?.name}
+                      </h1>
+                      <img
+                        src={selectedRecipe?.imageUrl}
+                        alt={selectedRecipe?.name}
+                        className="h-1/4 w-1/4 rounded-lg object-cover object-center"
+                      />
+                    </div>
+                    <div className="gap-4 rounded bg-gray-200 px-4 py-5 sm:px-6">
+                      {cookingInstruction.map((item, index) => {
+                        return (
+                          <>
+                            <div
+                              className={`text-sm font-medium text-gray-500 ${
+                                ["Instructions:"].includes(
+                                  item.trim().toLowerCase()
+                                )
+                                  ? "mt-10"
+                                  : ""
+                              }`}
+                            >
+                              {item}
+                            </div>
+                          </>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
-            {/* TODO ADD UI FOR GENERATING LIST */}
-            {/* <div className="flex w-full flex-col justify-center border-t border-gray-200">
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <div className="text-sm font-medium text-gray-500">Suka</div>
-                <div className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                  Datu Puti
-                </div>
-              </div>
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <div className="text-sm font-medium text-gray-500">Sili</div>
-                <div className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                  Ha?
-                </div>
-              </div>
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <div className="text-sm font-medium text-gray-500">Ginisa</div>
-                <div className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                  Mix
-                </div>
-              </div>
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <div className="text-sm font-medium text-gray-500">Water</div>
-                <div className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                  H2O
-                </div>
-              </div>
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <div className="text-sm font-medium text-gray-500">
-                  Instructions
-                </div>
-                <div className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                  Halua la tanan. Salamat
-                </div>
-              </div>
-            </div> */}
           </div>
         )}
-
-        {/* <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/list-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <p className="text-2xl text-white">
-            {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-          </p> */}
       </main>
     </>
   );
