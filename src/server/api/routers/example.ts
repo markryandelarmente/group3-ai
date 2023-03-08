@@ -4,7 +4,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { Configuration, OpenAIApi } from "openai";
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
@@ -17,9 +17,10 @@ export const exampleRouter = createTRPCRouter({
       };
     }),
   getRecipeList: publicProcedure
-  .input(z.object({ text: z.string() }))
+  .input(z.object({ text: z.string().nullish() }).nullish())
   .query(async ({input}) =>{
     try{
+      console.log(input)
       const completion = await openai.createCompletion({
         model: "text-davinci-003",
         // prompt: animal,
@@ -32,17 +33,12 @@ export const exampleRouter = createTRPCRouter({
       });
       if(completion.data?.choices[0] && completion.data?.choices[0].text){
         console.log(completion.data?.choices[0].text)
-        const returnedString = completion.data?.choices[0].text;
-        
+        return {
+          recipe:  completion.data?.choices[0].text
+        }
       }
-      // const getArray= (retrurnedString: String) =>{
-      //   console.log(retrurnedString)
-      // }
-      // getArray(completion.data ? completion.data.choices?[0] : "");
       return {
-        recipe: [
-          "test"
-        ]
+        recipe: []
       }
     }
     catch(e){
