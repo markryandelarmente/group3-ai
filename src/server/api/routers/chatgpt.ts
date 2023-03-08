@@ -12,7 +12,7 @@ export const chatGPTRouter = createTRPCRouter({
   generateResponse: publicProcedure
     .input(z.object({ prompt: z.string() }))
     .mutation(async ({ input }) => {
-      let structuredPrompt = `Give me 3 food recipe names for these ingredients: ${input.prompt}`;
+      let structuredPrompt = `Give me 6 food recipe names for these ingredients: ${input.prompt}`;
 
       const response = await openai.createCompletion({
         model: "text-davinci-003",

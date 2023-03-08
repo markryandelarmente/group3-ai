@@ -198,13 +198,21 @@ const Home: NextPage = () => {
                             role="status"
                             className="flex animate-pulse justify-around gap-6"
                           >
-                            <div className="h-36 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
-                            <div className="h-36 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
-                            <div className="h-36 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="h-60 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="h-60 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="h-60 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
+                          </div>
+                          <div
+                            role="status"
+                            className="mt-10 flex animate-pulse justify-around gap-6"
+                          >
+                            <div className="h-60 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="h-60 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="h-60 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
                           </div>
                         </div>
                       ) : (
-                        <div className="lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+                        <div className="lg:grid lg:grid-cols-3 lg:gap-x-6 lg:gap-y-6 lg:space-y-0">
                           {list.map((item: any, index) => (
                             <div
                               key={index}
