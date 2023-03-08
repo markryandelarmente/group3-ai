@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 
 const openai = new OpenAIApi(configuration);
@@ -36,7 +36,7 @@ export const chatGPTRouter = createTRPCRouter({
       const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: structuredPrompt,
-        temperature: 0.8,
+        temperature: 0.7,
         max_tokens: 256,
         top_p: 1,
         frequency_penalty: 0,

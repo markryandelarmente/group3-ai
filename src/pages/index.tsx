@@ -43,6 +43,7 @@ const Home: NextPage = () => {
   const handleSubmit = () => {
     setFlag(true);
     setList([]);
+    setImageList([]);
     chat.mutate({
       prompt: text,
     });
@@ -57,6 +58,7 @@ const Home: NextPage = () => {
       setFlag(true);
       setText("");
       setList([]);
+      setImageList([]);
     }
   };
 
@@ -68,6 +70,7 @@ const Home: NextPage = () => {
       imageUrl: "",
     });
     setCookingInstruction([]);
+    setImageList([]);
     setIsIntructionsPage(false);
     inputRef.current?.focus();
   };
@@ -82,8 +85,11 @@ const Home: NextPage = () => {
     });
   };
 
-  const goToInstructions = (e: any) => {
-    setSelectedRecipe(e);
+  const goToInstructions = (e: any, index: number) => {
+    setSelectedRecipe({
+      name: e.name,
+      imageUrl: imageList[index],
+    });
     cookingInstructions.mutate({
       prompt: e.name,
     });
@@ -201,7 +207,9 @@ const Home: NextPage = () => {
                               />
                             </div>
                             <h3 className="mt-6 text-sm text-gray-500">
-                              <div onClick={() => goToInstructions(item)}>
+                              <div
+                                onClick={() => goToInstructions(item, index)}
+                              >
                                 <span className="absolute inset-0" />
                                 {item.name}
                               </div>
@@ -225,17 +233,18 @@ const Home: NextPage = () => {
                   Back
                 </button>
                 <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6">
-                  <div className="border-gray-200 pr-2">
-                    <div className="mb-5 flex justify-between">
-                      <h1 className="flex items-end text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                        {selectedRecipe?.name}
-                      </h1>
+                  <div className="border-gray-200 pr-2 ">
+                    <div className="relative mb-6 h-80 w-full">
                       <img
                         src={selectedRecipe?.imageUrl}
                         alt={selectedRecipe?.name}
-                        className="h-1/4 w-1/4 rounded-lg object-cover object-center"
+                        className="h-full w-full rounded-lg object-cover object-center brightness-50"
                       />
+                      <h1 className="absolute bottom-0 mb-2 flex items-end pl-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                        {selectedRecipe?.name}
+                      </h1>
                     </div>
+
                     <div className="gap-4 rounded bg-gray-200 px-4 py-5 sm:px-6">
                       {cookingInstruction.map((item, index) => {
                         return (
