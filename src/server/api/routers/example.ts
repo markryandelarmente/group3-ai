@@ -32,6 +32,8 @@ export const exampleRouter = createTRPCRouter({
       });
       if(completion.data?.choices[0] && completion.data?.choices[0].text){
         console.log(completion.data?.choices[0].text)
+        const returnedString = completion.data?.choices[0].text;
+        
       }
       // const getArray= (retrurnedString: String) =>{
       //   console.log(retrurnedString)
