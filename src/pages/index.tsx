@@ -114,7 +114,8 @@ const Home: NextPage = () => {
           <div
             className={`flex h-screen w-full animate-sample-animation flex-row overflow-hidden bg-gray-400`}
           >
-            <div className="flex w-full flex-col justify-center border-t border-gray-200">
+            {/* TODO ADD UI FOR GENERATING LIST */}
+            {/* <div className="flex w-full flex-col justify-center border-t border-gray-200">
               <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <div className="text-sm font-medium text-gray-500">Suka</div>
                 <div className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
@@ -147,7 +148,7 @@ const Home: NextPage = () => {
                   Halua la tanan. Salamat
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         )}
 
