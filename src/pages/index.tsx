@@ -191,53 +191,54 @@ const Home: NextPage = () => {
                     <h2 className="text-2xl font-bold text-gray-900">
                       Recipes
                     </h2>
-                    <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
-                      {!list ? (
-                        <div className="flex h-screen w-full items-center justify-center border-[2px] border-red-400">
-                          <div role="status" className="max-w-sm animate-pulse">
-                            <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                            <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                            <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                            <div className="mb-2.5 h-2 max-w-[330px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                            <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                            <div className="h-2 max-w-[360px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                            <span className="sr-only">Loading...</span>
+                    <div className="mt-6 space-y-12">
+                      {!list || !list.length ? (
+                        <div className="h-screen w-full">
+                          <div
+                            role="status"
+                            className="flex animate-pulse justify-around gap-6"
+                          >
+                            <div className="h-36 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="h-36 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="h-36 w-full rounded-md bg-gray-200 dark:bg-gray-700"></div>
                           </div>
                         </div>
                       ) : (
-                        list.map((item: any, index) => (
-                          <div
-                            key={index}
-                            className="group relative cursor-pointer"
-                          >
-                            <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative flex h-80 w-full items-center justify-center overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
-                              {!imageList[index] ? (
-                                <div
-                                  className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                                  role="status"
-                                >
-                                  <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-                                    Loading...
-                                  </span>
-                                </div>
-                              ) : (
-                                <img
-                                  src={imageList[index]}
-                                  alt={item.name}
-                                  className="h-full w-full object-cover object-center"
-                                />
-                              )}
-                            </div>
-                            <h3 className="pt-4 text-base font-semibold text-gray-900">
-                              <div
-                                onClick={() => goToInstructions(item, index)}
-                              >
-                                <span className="absolute inset-0" />
-                                {item.name}
+                        <div className="lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+                          {list.map((item: any, index) => (
+                            <div
+                              key={index}
+                              className="group relative cursor-pointer "
+                            >
+                              <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative flex h-80 w-full items-center justify-center overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
+                                {!imageList[index] ? (
+                                  <div
+                                    className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                    role="status"
+                                  >
+                                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                                      Loading...
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <img
+                                    src={imageList[index]}
+                                    alt={item.name}
+                                    className="h-full w-full object-cover object-center"
+                                  />
+                                )}
                               </div>
-                            </h3>
-                          </div>
-                        ))
+                              <h3 className="pt-4 text-base font-semibold text-gray-900">
+                                <div
+                                  onClick={() => goToInstructions(item, index)}
+                                >
+                                  <span className="absolute inset-0" />
+                                  {item.name}
+                                </div>
+                              </h3>
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
                   </div>
