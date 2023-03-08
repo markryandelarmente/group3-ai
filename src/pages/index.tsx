@@ -12,15 +12,33 @@ import {
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const inputRef = useRef<HTMLInputElement>(null);
   const [text, setText] = useState<string>("");
+  const [imageList, setImageList] = useState([]);
+
   const chat = api.chatgpt.generateResponse.useMutation();
+  const chatImage = api.chatgpt.generateImage.useMutation();
+  //   {onSuccess(data, variables, context) {
+  //   console.log(data)
+  //   console.log(variables)
+  //   console.log(context)
+  //     const tempList = [];
+  //     tempList.push({
+  //       name: variables.prompt,
+  //       imageUrl: data,
+  //       hasImage: true
+  //     })
+  //     console.log(imageList)
+  //     setImageList()
+  // },});
   const [flag, setFlag] = useState<boolean>(false);
+  const [list, setList] = useState<string[]>([]);
+  const [usaNaBoolean, setUsaNaBoolean] = useState(false);
 
   const handleSubmit = () => {
     console.log(text);
     setFlag(true);
+    setList([]);
     chat.mutate({
       prompt: text,
     });
@@ -30,11 +48,13 @@ const Home: NextPage = () => {
     const { key } = event;
     if (key === "Enter" && text !== "") {
       console.log(text);
+      // handleImage(text);
       chat.mutate({
         prompt: text,
       });
       setFlag(true);
       setText("");
+      setList([]);
     }
   };
 
@@ -48,15 +68,84 @@ const Home: NextPage = () => {
     setText(e?.target?.value);
   };
 
+  const handleImage = async (text: string) => {
+    console.log("PAYLOAD: ", text);
+    const image = chatImage.mutate({
+      prompt: text,
+    });
+    console.log(image);
+    // if(image?.data){
+    //   const tempList = imageList;
+    //   tempList.push({
+    //     name: text,
+    //     imageUrl: chatImage?.data
+    //   })
+    //   console.log(tempList)
+    //   setImageList(tempList)
+    // }
+  };
+
+  useEffect(() => {
+    console.log("imagessss: ", imageList);
+  }, [imageList]);
+
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
+  // useEffect(() => {
+  //   if (chatImage?.data) {
+  //     console.log("RES: ", chatImage);
+  //     // return chatImage.data;
+  //   }
+  // }, [chatImage?.data])
+
   useEffect(() => {
-    if (chat.data?.result) {
-      console.log("RESPONSE: ", chat.data?.result);
+    if (chat.data) {
+      let splitter = chat.data;
+      let images = [
+        { url: "https://picsum.photos/id/237/200/300" },
+        { url: "https://picsum.photos/seed/picsum/200/300" },
+        { url: "https://picsum.photos/200/300/?blur" },
+      ];
+      let finalData: any = splitter.map((item, index) => {
+        return {
+          name: item,
+          imageUrl: images[index]?.url,
+        };
+      });
+      console.log("data", splitter);
+      setList(finalData);
+      // finalData.map((item) => {
+      //   console.log(item)
+      //   handleImage(item.name)
+      // })
     }
-  }, [chat.data?.result]);
+  }, [chat.data]);
+
+  // useEffect(() => {
+  //   let hasAllImages = list.every((e: any) => e.hasImage);
+  //   if (!hasAllImages) {
+  //     let finalData: any = list.map((item, index) => {
+  //       return {
+  //         name: item,
+  //         imageUrl: handleImage(item?.name),
+  //         hasImage: true,
+  //       };
+  //     });
+  //     console.log("SIGEEE: ", finalData);
+
+  //     setList(finalData);
+  //   }
+  // }, [list]);
+
+  // useEffect(() => {
+  //   if (list) {
+  //     chatImage.mutate({
+  //       prompt: list,
+  //     });
+  //   }
+  // }, [list]);
 
   return (
     <>
@@ -86,7 +175,7 @@ const Home: NextPage = () => {
             ref={inputRef}
             type="text"
             value={text}
-            placeholder="Enter your recipe"
+            placeholder="Enter your ingredients (separated by comma)"
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
@@ -112,8 +201,47 @@ const Home: NextPage = () => {
         </div>
         {flag && (
           <div
-            className={`flex h-screen w-full animate-sample-animation flex-row overflow-hidden bg-gray-400`}
+            className={`flex h-screen w-full animate-sample-animation flex-col overflow-hidden bg-gray-400`}
           >
+            {!usaNaBoolean ? (
+              <div className="bg-gray-100">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                  <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-32">
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Recipes
+                    </h2>
+                    <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+                      {list.map((item: any, index) => (
+                        <div key={index} className="group relative">
+                          <div className="sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1 lg:aspect-h-1 relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:h-64">
+                            <img
+                              src={item.imageUrl}
+                              alt={item.name}
+                              className="h-full w-full object-cover object-center"
+                            />
+                          </div>
+                          <h3 className="mt-6 text-sm text-gray-500">
+                            <div onClick={() => setUsaNaBoolean(true)}>
+                              <span className="absolute inset-0" />
+                              {item.name}
+                            </div>
+                          </h3>
+                          <p className="text-base font-semibold text-gray-900">
+                            {item.name}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex-ro flex">
+                <button onClick={() => setUsaNaBoolean(false)}>
+                  Ma back kun magkita pa siya
+                </button>
+              </div>
+            )}
             {/* TODO ADD UI FOR GENERATING LIST */}
             {/* <div className="flex w-full flex-col justify-center border-t border-gray-200">
               <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -155,7 +283,7 @@ const Home: NextPage = () => {
         {/* <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
+              href="https://create.t3.gg/en/usage/list-steps"
               target="_blank"
             >
               <h3 className="text-2xl font-bold">First Steps →</h3>
