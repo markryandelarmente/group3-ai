@@ -15,17 +15,24 @@ const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const inputRef = useRef<HTMLInputElement>(null);
   const [text, setText] = useState<string>("");
+  const chat = api.chatgpt.generateResponse.useMutation();
   const [flag, setFlag] = useState<boolean>(false);
 
   const handleSubmit = () => {
     console.log(text);
     setFlag(true);
+    chat.mutate({
+      prompt: text,
+    });
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     const { key } = event;
     if (key === "Enter" && text !== "") {
       console.log(text);
+      chat.mutate({
+        prompt: text,
+      });
       setFlag(true);
       setText("");
     }
@@ -44,6 +51,12 @@ const Home: NextPage = () => {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (chat.data?.result) {
+      console.log("RESPONSE: ", chat.data?.result);
+    }
+  }, [chat.data?.result]);
 
   return (
     <>
