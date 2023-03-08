@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 
 const openai = new OpenAIApi(configuration);
@@ -25,23 +25,8 @@ export const chatGPTRouter = createTRPCRouter({
       });
       let tempData = response.data.choices[0]?.text?.trim().split("\n");
       console.log("TEXT: ", tempData);
-      tempData = tempData?.filter((e) => e);
+      tempData = tempData?.filter((e) => e.match(/\d/));
       return tempData;
-      //   setTimeout(() => {
-      //   if (tempData?.length) {
-      //         let formattedData = tempData.map(async (item) => {
-      //           return {
-      //             name: item.trim(),
-      //             imageUrl: await generateImage(item),
-      //           };
-      //         });
-      //     }, 2000);
-      //         if (formattedData.length) {
-      //       return {
-      //         result: formattedData,
-      //       };
-      //     }
-      //   }
     }),
   generateCookingDetails: publicProcedure
     .input(z.object({ prompt: z.string() }))
